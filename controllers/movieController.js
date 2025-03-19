@@ -75,4 +75,50 @@ function destroy(req, res) {
   });
 }
 
-export { index, show, destroy };
+function storeReview(req, res) {
+
+  const { id } = req.params;
+
+  const { title, director, genre, release_year, abstract } = req.body;
+
+  const sql =
+    'INSERT INTO reviews ( title, director, genre, release_year, abstract, movie_id ) VALUES (?,?,?,?,?,?)';
+
+  connection.query(sql, [title, director, genre, release_year, abstract, id], (err, results) => {
+    if (err)
+      return res.status(500).json({
+        error: 'Database Errore StoreReview',
+      });
+
+    res.status(201);
+    res.json({
+      message: 'review Added',
+      id: results.insertId,
+    });
+  });
+}
+
+function store(req,res){
+
+  const { title, director, genre, release_year, abstract} = req.body
+
+  const imageName = `${req.file.filename}`
+
+  const sql = "INSERT INTO books (title, director, genre, release_year, abstract, image) VALUES (?,?,?,?,?,?)"
+
+  connection.query( sql, [title, director, genre, release_year, abstract,], (err, results) => {
+      if(err) return res.status(500).json({
+          error: 'Database Errore Store'
+      })
+
+      res.status(201).json({
+          status: "success",
+          message: "Film creato con successo",
+          id: results.insertId
+      }
+      )
+  })
+
+}
+
+export { index, show, destroy, storeReview, store };
